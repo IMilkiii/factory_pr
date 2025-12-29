@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Главная страница{% endblock %}
+{% block content %}
+  <h1>Экспонаты музея</h1>
+  {% for exhibit in page_obj %}
+    <article class="mb-5">
+      <ul>
+        <li>
+          Дата публикации: {{ exhibit.pub_date|date:"d E Y" }}
+        </li>
+        <li>
+          Автор: <a href="{% url 'users:profile' username=exhibit.author.username %}">{{ exhibit.author.username }}</a>
+        </li>
+        {% if exhibit.exposition %}
+          <li>
+            Экспозиция: <a href="{% url 'exhibits:exposition_detail' exposition_slug=exhibit.exposition.slug %}">{{ exhibit.exposition.title }}</a>
+          </li>
+        {% endif %}
+        <li>
+          Комментариев: {{ exhibit.comment_count }}
+        </li>
+      </ul>
+      {% if exhibit.image %}
+        <img src="{{ exhibit.image.url }}" alt="{{ exhibit.title }}" style="max-width: 300px;">
+      {% endif %}
+      <p>{{ exhibit.description|truncatewords:30 }}</p>
+      <a href="{% url 'exhibits:exhibit_detail' exhibit_id=exhibit.id %}">Читать полный текст</a>
+    </article>
+    <hr>
+  {% endfor %}
+  {% include 'includes/paginator.html' %}
+{% endblock %}
+

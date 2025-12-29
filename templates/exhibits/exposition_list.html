@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Экспозиции{% endblock %}
+{% block content %}
+  <h1>Экспозиции</h1>
+  {% for exposition in expositions %}
+    <article class="mb-5">
+      <h2>
+        <a href="{% url 'exhibits:exposition_detail' exposition_slug=exposition.slug %}">
+          {{ exposition.title }}
+        </a>
+      </h2>
+      {% if exposition.hall %}
+        <p>Зал: <a href="{% url 'exhibits:hall_detail' hall_id=exposition.hall.id %}">{{ exposition.hall }}</a></p>
+      {% endif %}
+      <p>{{ exposition.description|truncatewords:30 }}</p>
+      <p>Экспонатов: {{ exposition.exhibit_count }}</p>
+    </article>
+    <hr>
+  {% endfor %}
+{% endblock %}
+

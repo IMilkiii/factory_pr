@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Залы{% endblock %}
+{% block content %}
+  <h1>Залы музея</h1>
+  {% for hall in halls %}
+    <article class="mb-5">
+      <h2>
+        <a href="{% url 'exhibits:hall_detail' hall_id=hall.id %}">
+          {{ hall }}
+        </a>
+      </h2>
+      {% if hall.floor %}
+        <p>Этаж: {{ hall.floor }}</p>
+      {% endif %}
+      <p>{{ hall.description|truncatewords:30 }}</p>
+    </article>
+    <hr>
+  {% endfor %}
+{% endblock %}
+

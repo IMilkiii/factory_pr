@@ -1,0 +1,17 @@
+/* Стили для проекта */
+body {
+  font-family: Arial, sans-serif;
+}
+
+.navbar {
+  margin-bottom: 20px;
+}
+
+.card {
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+

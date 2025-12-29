@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}{{ hall }}{% endblock %}
+{% block content %}
+  <article>
+    <h1>{{ hall }}</h1>
+    {% if hall.floor %}
+      <p>Этаж: {{ hall.floor }}</p>
+    {% endif %}
+    <p>{{ hall.description|linebreaks }}</p>
+  </article>
+  
+  <h2>Экспозиции в зале</h2>
+  {% for exposition in expositions %}
+    <article class="mb-5">
+      <h3>
+        <a href="{% url 'exhibits:exposition_detail' exposition_slug=exposition.slug %}">
+          {{ exposition.title }}
+        </a>
+      </h3>
+      <p>{{ exposition.description|truncatewords:30 }}</p>
+    </article>
+    <hr>
+  {% endfor %}
+{% endblock %}
+

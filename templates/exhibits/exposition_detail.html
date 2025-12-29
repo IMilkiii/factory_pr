@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}{{ exposition.title }}{% endblock %}
+{% block content %}
+  <article>
+    <h1>{{ exposition.title }}</h1>
+    {% if exposition.hall %}
+      <p>Зал: <a href="{% url 'exhibits:hall_detail' hall_id=exposition.hall.id %}">{{ exposition.hall }}</a></p>
+    {% endif %}
+    <p>{{ exposition.description|linebreaks }}</p>
+  </article>
+  
+  <h2>Экспонаты экспозиции</h2>
+  {% for exhibit in page_obj %}
+    <article class="mb-5">
+      <ul>
+        <li>
+          Дата публикации: {{ exhibit.pub_date|date:"d E Y" }}
+        </li>
+        <li>
+          Автор: <a href="{% url 'users:profile' username=exhibit.author.username %}">{{ exhibit.author.username }}</a>
+        </li>
+        <li>
+          Комментариев: {{ exhibit.comment_count }}
+        </li>
+      </ul>
+      {% if exhibit.image %}
+        <img src="{{ exhibit.image.url }}" alt="{{ exhibit.title }}" style="max-width: 300px;">
+      {% endif %}
+      <p>{{ exhibit.description|truncatewords:30 }}</p>
+      <a href="{% url 'exhibits:exhibit_detail' exhibit_id=exhibit.id %}">Читать полный текст</a>
+    </article>
+    <hr>
+  {% endfor %}
+  {% include 'includes/paginator.html' %}
+{% endblock %}
+

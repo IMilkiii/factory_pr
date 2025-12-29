@@ -1,0 +1,55 @@
+<header>
+  <nav class="navbar navbar-light" style="background-color: lightskyblue">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'exhibits:index' %}">
+        <strong>Музейный комплекс</strong>
+      </a>
+      <ul class="nav nav-pills">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'exhibits:index' %}">
+            Главная
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'exhibits:exposition_list' %}">
+            Экспозиции
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'exhibits:hall_list' %}">
+            Залы
+          </a>
+        </li>
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'exhibits:exhibit_create' %}">
+              Добавить экспонат
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'users:profile' username=user.username %}">
+              Профиль: {{ user.username }}
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">
+              Выйти
+            </a>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">
+              Войти
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'signup' %}">
+              Регистрация
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+</header>
+
