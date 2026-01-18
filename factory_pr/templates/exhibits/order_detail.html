@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Детали заказа{% endblock %}
+{% block content %}
+  <h1>Заказ #{{ order.id }}</h1>
+  <article>
+    <h2>{{ order.title }}</h2>
+    <ul>
+      <li>
+        Дата создания: {{ order.created_date|date:"d E Y" }}
+      </li>
+      <li>
+        Тип мебели: {{ order.furniture_type.name }}
+      </li>
+      <li>
+        Статус: {{ order.get_status_display }}
+      </li>
+      <li>
+        Описание: {{ order.description }}
+      </li>
+      <li>
+        Цена: {{ order.price }} руб.
+      </li>
+    </ul>
+    
+    {% if order.workshops.all %}
+      <h3>Цеха задействованные в заказе:</h3>
+      <ul>
+        {% for workshop in order.workshops.all %}
+          <li>{{ workshop.name }} ({{ workshop.get_type_display }})</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    
+    {% if work_journal %}
+      <h3>Журнал работ:</h3>
+      {% for journal in work_journal %}
+        <div class="journal-entry mb-3">
+          <h4>{{ journal.workshop.name }} - {{ journal.date|date:"d.m.Y" }}</h4>
+          <p>Работы: {{ journal.description }}</p>
+          <p>Часы: {{ journal.hours_worked }}</p>
+          {% if journal.workers.all %}
+            <p>Работники: 
+              {% for worker in journal.workers.all %}
+                {{ worker.name }}{% if not forloop.last %}, {% endif %}
+              {% endfor %}
+            </p>
+          {% endif %}
+          {% if request.user.is_authenticated %}
+            <a href="{% url 'exhibits:edit_work_journal' order_id=order.id journal_id=journal.id %}" class="btn btn-sm btn-warning">Редактировать</a>
+            <a href="{% url 'exhibits:delete_work_journal' order_id=order.id journal_id=journal.id %}" class="btn btn-sm btn-danger">Удалить</a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% endif %}
+    
+    {% if request.user.is_authenticated %}
+      <div class="mt-4">
+        <a href="{% url 'exhibits:add_work_journal' order_id=order.id %}" class="btn btn-primary">Добавить запись в журнал</a>
+        <a href="{% url 'exhibits:order_edit' order_id=order.id %}" class="btn btn-warning">Редактировать заказ</a>
+        {% if order.status != 'completed' %}
+          <a href="{% url 'exhibits:complete_order' order_id=order.id %}" class="btn btn-success">Завершить заказ</a>
+        {% endif %}
+        <a href="{% url 'exhibits:order_delete' order_id=order.id %}" class="btn btn-danger">Удалить заказ</a>
+      </div>
+    {% endif %}
+    
+    <div class="mt-3">
+      <a href="{% url 'exhibits:index' %}" class="btn btn-secondary">Назад к списку заказов</a>
+    </div>
+  </article>
+{% endblock %}

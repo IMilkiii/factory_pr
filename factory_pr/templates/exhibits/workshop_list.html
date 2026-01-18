@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Цеха{% endblock %}
+{% block content %}
+  <h1>Цеха фабрики</h1>
+  {% for workshop in page_obj %}
+    <article class="mb-3">
+      <h3>{{ workshop.name }}</h3>
+      <p>Тип: {{ workshop.get_type_display }}</p>
+      <p>Начальник: {{ workshop.supervisor }}</p>
+      <p>Количество работников: {{ workshop.worker_count }}</p>
+      <p>Активных заказов: {{ workshop.active_order_count }}</p>
+      <a href="{% url 'exhibits:workshop_detail' workshop_id=workshop.id %}" class="btn btn-primary">Подробнее</a>
+    </article>
+    <hr>
+  {% endfor %}
+  {% include 'includes/paginator.html' %}
+{% endblock %}

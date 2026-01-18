@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}{{ exhibit.title }}{% endblock %}
+{% block content %}
+  <article>
+    <ul>
+      <li>
+        Дата публикации: {{ exhibit.pub_date|date:"d E Y" }}
+      </li>
+      <li>
+        Автор: <a href="{% url 'users:profile' username=exhibit.author.username %}">{{ exhibit.author.username }}</a>
+      </li>
+      {% if exhibit.exposition %}
+        <li>
+          Экспозиция: <a href="{% url 'exhibits:exposition_detail' exposition_slug=exhibit.exposition.slug %}">{{ exhibit.exposition.title }}</a>
+        </li>
+      {% endif %}
+      <li>
+        Статус: {{ exhibit.get_status_display }}
+      </li>
+    </ul>
+    {% if exhibit.image %}
+      <img src="{{ exhibit.image.url }}" alt="{{ exhibit.title }}" style="max-width: 500px;">
+    {% endif %}
+    <p>{{ exhibit.description|linebreaks }}</p>
+    {% if exhibit.location_note %}
+      <p><strong>Примечание о размещении:</strong> {{ exhibit.location_note }}</p>
+    {% endif %}
+    
+    {% if user == exhibit.author and not request.GET.delete %}
+      <a href="{% url 'exhibits:exhibit_edit' exhibit_id=exhibit.id %}">Редактировать</a>
+      <a href="{% url 'exhibits:exhibit_delete' exhibit_id=exhibit.id %}">Удалить</a>
+    {% endif %}
+  </article>
+  
+  {% if form %}
+    <div class="card my-4">
+      <h5 class="card-header">
+        {% if comment_to_edit %}Редактировать комментарий{% else %}Добавить комментарий{% endif %}:
+      </h5>
+      <div class="card-body">
+        <form method="post" action="{% if comment_to_edit %}{% url 'exhibits:edit_comment' exhibit_id=exhibit.id comment_id=comment_to_edit.id %}{% else %}{% url 'exhibits:add_comment' exhibit_id=exhibit.id %}{% endif %}">
+          {% csrf_token %}
+          <div class="form-group mb-2">
+            {{ form.text }}
+          </div>
+          <button type="submit" class="btn btn-primary">
+            {% if comment_to_edit %}Сохранить{% else %}Отправить{% endif %}
+          </button>
+          {% if comment_to_edit %}
+            <a href="{% url 'exhibits:exhibit_detail' exhibit_id=exhibit.id %}" class="btn btn-secondary">Отмена</a>
+          {% endif %}
+        </form>
+      </div>
+    </div>
+  {% endif %}
+  
+  {% for comment in comments %}
+    <div class="media mb-4">
+      <div class="media-body">
+        <h5 class="mt-0">
+          <a href="{% url 'users:profile' username=comment.author.username %}">
+            {{ comment.author.username }}
+          </a>
+        </h5>
+        <p>{{ comment.text|linebreaks }}</p>
+        <small class="text-muted">{{ comment.created_at|date:"d E Y, H:i" }}</small>
+        {% if user == comment.author and not comment_to_edit %}
+          <a href="{% url 'exhibits:edit_comment' exhibit_id=exhibit.id comment_id=comment.id %}">Редактировать</a>
+          <a href="{% url 'exhibits:delete_comment' exhibit_id=exhibit.id comment_id=comment.id %}">Удалить</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+  
+  {% if comment_to_delete %}
+    <div class="card my-4">
+      <h5 class="card-header">Подтвердите удаление комментария:</h5>
+      <div class="card-body">
+        <p>{{ comment_to_delete.text|linebreaks }}</p>
+        <form method="post" action="{% url 'exhibits:delete_comment' exhibit_id=exhibit.id comment_id=comment_to_delete.id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Удалить</button>
+          <a href="{% url 'exhibits:exhibit_detail' exhibit_id=exhibit.id %}" class="btn btn-secondary">Отмена</a>
+        </form>
+      </div>
+    </div>
+  {% endif %}
+  
+  {% if request.GET.delete and user == exhibit.author %}
+    <div class="card my-4">
+      <h5 class="card-header">Подтвердите удаление экспоната:</h5>
+      <div class="card-body">
+        <p>{{ exhibit.title }}</p>
+        <form method="post" action="{% url 'exhibits:exhibit_delete' exhibit_id=exhibit.id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Удалить</button>
+          <a href="{% url 'exhibits:exhibit_detail' exhibit_id=exhibit.id %}" class="btn btn-secondary">Отмена</a>
+        </form>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
+

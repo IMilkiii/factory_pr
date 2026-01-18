@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Главная страница{% endblock %}
+{% block content %}
+  <h1>Заказы мебельной фабрики</h1>
+  {% for order in page_obj %}
+    <article class="mb-5">
+      <h3>{{ order.title }}</h3>
+      <ul>
+        <li>
+          Дата создания: {{ order.created_date|date:"d E Y" }}
+        </li>
+        <li>
+          Тип мебели: {{ order.furniture_type.name }}
+        </li>
+        <li>
+          Статус: {{ order.get_status_display }}
+        </li>
+        <li>
+          Количество цехов: {{ order.workshop_count }}
+        </li>
+      </ul>
+      <p>{{ order.description|truncatewords:30 }}</p>
+      <a href="{% url 'exhibits:order_detail' order_id=order.id %}">Подробнее</a>
+    </article>
+    <hr>
+  {% endfor %}
+  {% include 'includes/paginator.html' %}
+{% endblock %}
+

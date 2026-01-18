@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Типы мебели{% endblock %}
+{% block content %}
+  <h1>Типы мебели</h1>
+  {% for furniture_type in page_obj %}
+    <article class="mb-3">
+      <h3>{{ furniture_type.name }}</h3>
+      <p>{{ furniture_type.description }}</p>
+      <p>Количество заказов: {{ furniture_type.order_count }}</p>
+      <a href="{% url 'exhibits:furniture_type_detail' furniture_type_id=furniture_type.id %}" class="btn btn-primary">Подробнее</a>
+    </article>
+    <hr>
+  {% endfor %}
+  {% include 'includes/paginator.html' %}
+{% endblock %}

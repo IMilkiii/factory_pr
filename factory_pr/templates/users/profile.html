@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Профиль пользователя {{ profile_user.username }}{% endblock %}
+{% block content %}
+  <h1>Профиль пользователя {{ profile_user.username }}</h1>
+  <div class="mb-5">
+    <p><strong>Имя:</strong> {{ profile_user.first_name }}</p>
+    <p><strong>Фамилия:</strong> {{ profile_user.last_name }}</p>
+    <p><strong>Email:</strong> {{ profile_user.email }}</p>
+    {% if user == profile_user %}
+      <a href="{% url 'users:profile_edit' %}">Редактировать профиль</a>
+      <a href="{% url 'password_change' %}">Изменить пароль</a>
+    {% endif %}
+  </div>
+  
+  <h2>Экспонаты пользователя</h2>
+  {% for exhibit in page_obj %}
+    <article class="mb-5">
+      <ul>
+        <li>
+          Дата публикации: {{ exhibit.pub_date|date:"d E Y" }}
+        </li>
+        {% if exhibit.exposition %}
+          <li>
+            Экспозиция: <a href="{% url 'exhibits:exposition_detail' exposition_slug=exhibit.exposition.slug %}">{{ exhibit.exposition.title }}</a>
+          </li>
+        {% endif %}
+        <li>
+          Комментариев: {{ exhibit.comment_count }}
+        </li>
+      </ul>
+      {% if exhibit.image %}
+        <img src="{{ exhibit.image.url }}" alt="{{ exhibit.title }}" style="max-width: 300px;">
+      {% endif %}
+      <p>{{ exhibit.description|truncatewords:30 }}</p>
+      <a href="{% url 'exhibits:exhibit_detail' exhibit_id=exhibit.id %}">Читать полный текст</a>
+    </article>
+    <hr>
+  {% endfor %}
+  {% include 'includes/paginator.html' %}
+{% endblock %}
+
